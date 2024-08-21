@@ -1,5 +1,6 @@
 ﻿using AtmProject.Banco;
 using AtmProject.Repositorio;
+using AtmProject.Servicos;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -34,33 +35,21 @@ namespace AtmProject
 
         private void btn_confirma_Click(object sender, EventArgs e)
         {
-            if (tb_pin.Text == "" || tb_confirma_pin.Text == "")
+            try
             {
-                MessageBox.Show("Preencha os campos!");
-            }
-            else if (tb_confirma_pin.Text != tb_pin.Text)
-            {
-                MessageBox.Show("Os campos devem ser iguais!");
-            }
-            else
-            {
-                try
-                {
-                    var newPin = Convert.ToInt32(tb_pin.Text);
-                    AccountRepository accountRepository = new AccountRepository();
-                    accountRepository.UpdatePin(LoginView.numConta, newPin);
-                    MessageBox.Show("O pin foi atualizado com sucesso!");
-                    HomeView home = new HomeView();
-                    home.Show();
-                    this.Hide();
+                var newPin = Convert.ToInt32("0" + tb_pin.Text);
+                var confirmPin = Convert.ToInt32("0" + tb_confirma_pin.Text);
+                AccountService.Instance.UpdatePin(LoginView.numConta, newPin, confirmPin);
+                MessageBox.Show("O pin foi atualizado com sucesso!");
+                HomeView home = new HomeView();
+                home.Show();
+                this.Hide();
 
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
             }
-
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         private void changePin_Load(object sender, EventArgs e)

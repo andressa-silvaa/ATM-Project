@@ -1,5 +1,6 @@
 ﻿using AtmProject.Banco;
 using AtmProject.Repositorio;
+using AtmProject.Servicos;
 using Microsoft.VisualBasic.Logging;
 using System;
 using System.Collections.Generic;
@@ -36,22 +37,28 @@ namespace AtmProject
 
         private void btn_login_Click(object sender, EventArgs e)
         {
-            var accNum = Convert.ToInt32("0" + tb_num_conta.Text);
-            var pin = Convert.ToInt32("0" + tb_senha.Text);
-            AccountRepository accountRepository = new AccountRepository();
-            var isValid = accountRepository.Login(accNum, pin);
-
-
-            if (isValid)
+            try
             {
-                numConta = Convert.ToInt32(tb_num_conta.Text);
-                HomeView home = new HomeView();
-                home.Show();
-                this.Hide();
+                var accNum = Convert.ToInt32("0" + tb_num_conta.Text);
+                var pin = Convert.ToInt32("0" + tb_senha.Text);
+                var isValid = AccountService.Instance.Login(accNum, pin);
+
+
+                if (isValid)
+                {
+                    numConta = Convert.ToInt32(tb_num_conta.Text);
+                    HomeView home = new HomeView();
+                    home.Show();
+                    this.Hide();
+                }
+                else
+                {
+                    MessageBox.Show("Dados incorretos.\nTente novamente!");
+                }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Dados incorretos.\nTente novamente!");
+                MessageBox.Show(ex.Message);
             }
         }
     }

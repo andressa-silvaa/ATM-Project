@@ -45,6 +45,19 @@ namespace AtmProject.Repositorio
                 return result;
             }
         }
+
+        public Account? GetByAcc(int accNum)
+        {
+            string query = "select * from Account where AccNum = @numConta";
+            using (SqlCommand cmd = new SqlCommand(query))
+            {
+                cmd.Parameters.AddWithValue("@numConta", accNum);
+
+                var result = ContextDatabase.Instance.ReaderClassList<Account>(cmd).FirstOrDefault();
+
+                return result;
+            }
+        }
         public bool UpdatePin(int accNum, int newPin)
         {
             string query = "update Account set Pin = @Valor where Account.AccNum = @NumConta";

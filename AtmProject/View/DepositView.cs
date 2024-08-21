@@ -1,5 +1,6 @@
 ﻿using AtmProject.Banco;
 using AtmProject.Repositorio;
+using AtmProject.Servicos;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -35,38 +36,20 @@ namespace AtmProject
 
         private void btn_deposito_Click(object sender, EventArgs e)
         {
-            if (!Util.ValidateInteger(tb_valor.Text))
+            try
             {
-                MessageBox.Show("Necessário informar um valor válido!");
-                return;
+                var depositValue = Convert.ToDecimal("0" + tb_valor.Text);
+                AccountService.Instance.Deposit(LoginView.numConta, depositValue, "Depósito");
+
+                MessageBox.Show($"O valor {depositValue:C2} foi depositado na conta {LoginView.numConta}");
+                HomeView home = new HomeView();
+                home.Show();
+                this.Hide();
+
             }
-            if (tb_valor.Text == "" || Convert.ToInt32(tb_valor.Text) <= 0)
+            catch (Exception ex)
             {
-                MessageBox.Show("Necessário informar um valor válido!");
-                return;
-            }
-            else
-            {
-                try
-
-                {
-                    AccountRepository accountRepository = new AccountRepository();
-
-                    var depositValue = Convert.ToDecimal(tb_valor.Text);
-
-                    accountRepository.Deposit(LoginView.numConta, depositValue, "Depósito");
-
-                    MessageBox.Show($"O valor {depositValue:C2} foi depositado na conta {LoginView.numConta}");
-                    HomeView home = new HomeView();
-                    home.Show();
-                    this.Hide();
-
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-
+                MessageBox.Show(ex.Message);
             }
 
         }

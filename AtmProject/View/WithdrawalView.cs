@@ -1,5 +1,6 @@
 ﻿using AtmProject.Banco;
 using AtmProject.Repositorio;
+using AtmProject.Servicos;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -36,42 +37,18 @@ namespace AtmProject
 
         private void btn_sacar_Click(object sender, EventArgs e)
         {
-            if (tb_valor.Text == "")
+            try
             {
-                MessageBox.Show("Preencha o valor!");
+                var value = Convert.ToDecimal("0" + tb_valor.Text);
+                AccountService.Instance.Withdrawal(LoginView.numConta, value, "Saque");
+                MessageBox.Show($"O valor {value:C2} foi sacado da conta {LoginView.numConta}");
+                HomeView home = new HomeView();
+                home.Show();
+                this.Hide();
             }
-            else if (!Util.ValidateInteger(tb_valor.Text))
+            catch (Exception ex)
             {
-                MessageBox.Show("Necessário informar um valor válido!");
-                return;
-            }
-            else if (Convert.ToInt32(tb_valor.Text) <= 0)
-            {
-                MessageBox.Show("Entre com um valor válido!");
-                return;
-            }
-            else if (Convert.ToDecimal(tb_valor.Text) > Convert.ToDecimal(_saldo))
-            {
-                MessageBox.Show("Insira um valor menor ou igual ao seu saldo.");
-                return;
-            }
-            else
-            {
-                try
-                {
-                    var value = Convert.ToDecimal(tb_valor.Text);
-
-                    AccountRepository accountRepository = new AccountRepository();
-                    accountRepository.Withdrawal(LoginView.numConta, value, "Saque");
-
-                    HomeView home = new HomeView();
-                    home.Show();
-                    this.Hide();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
+                MessageBox.Show(ex.Message);
             }
         }
         private void withdrawal_Load(object sender, EventArgs e)

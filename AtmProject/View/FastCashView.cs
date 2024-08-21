@@ -1,5 +1,6 @@
 ﻿using AtmProject.Banco;
 using AtmProject.Repositorio;
+using AtmProject.Servicos;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -48,13 +49,7 @@ namespace AtmProject
         {
             try
             {
-                AccountRepository accountRepository = new AccountRepository();
-                if (value > accountRepository.GetBalance(LoginView.numConta))
-                {
-                    return "Saldo insuficiente.";
-                }
-
-                accountRepository.Withdrawal(LoginView.numConta, value, "Caixa Rápido");
+                AccountService.Instance.Withdrawal(LoginView.numConta, value, "Caixa Rápido");
                 return $"O valor R${value} foi sacado da conta {LoginView.numConta}";
 
             }

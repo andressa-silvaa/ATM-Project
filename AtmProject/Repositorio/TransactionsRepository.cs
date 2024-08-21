@@ -26,13 +26,22 @@ namespace AtmProject.Repositorio
             return cmd;
         }
 
-        public DataTable GetAllTransactions(int accNum)
+        public DataTable GetAllTransactionsDataSource(int accNum)
         {
             string sqlQuery = "Select * from Transactions t where t.AccNum = @NumConta";
             using (SqlCommand cmd = new SqlCommand(sqlQuery))
             {
                 cmd.Parameters.AddWithValue("@NumConta", accNum);
                 return ContextDatabase.Instance.ReaderDataTable(cmd);
+            }
+        }
+        public List<Transaction> GetAllTransactions(int accNum)
+        {
+            string sqlQuery = "Select * from Transactions t where t.AccNum = @NumConta";
+            using (SqlCommand cmd = new SqlCommand(sqlQuery))
+            {
+                cmd.Parameters.AddWithValue("@NumConta", accNum);
+                return ContextDatabase.Instance.ReaderClassList<Transaction>(cmd);
             }
         }
     }
