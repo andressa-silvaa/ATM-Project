@@ -1,9 +1,9 @@
 namespace AtmProject
 {
-    public partial class begin : Form
+    public partial class BeginView : Form
     {
         public int contagem = 0;
-        public begin()
+        public BeginView()
         {
             InitializeComponent();
         }
@@ -17,7 +17,7 @@ namespace AtmProject
             {
                 pb_begin.Value = 0;
                 timer1.Stop();
-                login login = new login();
+                LoginView login = new LoginView();
                 login.Show();
                 this.Hide();
             }

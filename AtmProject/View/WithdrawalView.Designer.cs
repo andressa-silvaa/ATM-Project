@@ -1,6 +1,6 @@
 ﻿namespace AtmProject
 {
-    partial class withdrawal
+    partial class WithdrawalView
     {
         /// <summary>
         /// Required designer variable.

@@ -1,6 +1,6 @@
 ﻿namespace AtmProject
 {
-    partial class changePin
+    partial class ChangePinView
     {
         /// <summary>
         /// Required designer variable.

@@ -12,11 +12,11 @@ using System.Windows.Forms;
 
 namespace AtmProject
 {
-    public partial class miniStatement : Form
+    public partial class MiniStatementView : Form
     {
         private string _saldo;
 
-        public miniStatement()
+        public MiniStatementView()
         {
             InitializeComponent();
         }
@@ -25,14 +25,14 @@ namespace AtmProject
             string sqlQuery = "Select * from Transactions t where t.AccNum = @NumConta";
             using (SqlCommand cmd = new SqlCommand(sqlQuery))
             {
-                cmd.Parameters.AddWithValue("@NumConta", login.numConta);
+                cmd.Parameters.AddWithValue("@NumConta", LoginView.numConta);
                 dt_extrato.DataSource = ContextDatabase.Instance.ReaderDataTable(cmd);
             }
 
         }
         private void miniStatement_Load(object sender, EventArgs e)
         {
-            lb_numConta.Text = "Nº da conta:" + login.numConta;
+            lb_numConta.Text = "Nº da conta:" + LoginView.numConta;
             try
             {
                 Populate();
@@ -53,7 +53,7 @@ namespace AtmProject
 
         private void lbl_back_Click(object sender, EventArgs e)
         {
-            home home = new home();
+            HomeView home = new HomeView();
             home.Show();
             this.Hide();
 

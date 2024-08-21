@@ -1,6 +1,6 @@
 ﻿namespace AtmProject
 {
-    partial class fastCash
+    partial class FastCashView
     {
         /// <summary>
         /// Required designer variable.

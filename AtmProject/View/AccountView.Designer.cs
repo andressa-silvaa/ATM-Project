@@ -1,6 +1,6 @@
 ﻿namespace AtmProject
 {
-    partial class account
+    partial class AccountView
     {
         /// <summary>
         /// Required designer variable.

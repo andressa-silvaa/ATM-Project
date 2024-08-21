@@ -12,14 +12,14 @@ using System.Windows.Forms;
 
 namespace AtmProject
 {
-    public partial class balance : Form
+    public partial class BalanceView : Form
     {
         private decimal _saldo;
 
-        public balance()
+        public BalanceView()
         {
             InitializeComponent();
-            this._saldo = this.GetSaldo(login.numConta);
+            this._saldo = this.GetSaldo(LoginView.numConta);
         }
 
         public decimal GetSaldo(string numConta)
@@ -27,7 +27,7 @@ namespace AtmProject
             string query = "select balance from Account where AccNum = @numConta";
             using (SqlCommand cmd = new SqlCommand(query))
             {
-                cmd.Parameters.AddWithValue("@numConta", login.numConta);
+                cmd.Parameters.AddWithValue("@numConta", LoginView.numConta);
 
                 decimal result = ContextDatabase.Instance.ExecuteScalar<decimal?>(cmd).GetValueOrDefault();
 
@@ -38,7 +38,7 @@ namespace AtmProject
 
         private void label7_Click(object sender, EventArgs e)
         {
-            home home = new home();
+            HomeView home = new HomeView();
             home.Show();
             this.Hide();
         }
@@ -50,7 +50,7 @@ namespace AtmProject
 
         private void balance_Load(object sender, EventArgs e)
         {
-            lbl_num_conta_real.Text = login.numConta;
+            lbl_num_conta_real.Text = LoginView.numConta;
             lbl_saldo_real.Text = this._saldo.ToString("C2");
 
         }

@@ -1,6 +1,6 @@
 ﻿namespace AtmProject
 {
-    partial class miniStatement
+    partial class MiniStatementView
     {
         /// <summary>
         /// Required designer variable.

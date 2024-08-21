@@ -13,9 +13,9 @@ using System.Windows.Forms;
 namespace AtmProject
 {
 
-    public partial class deposit : Form
+    public partial class DepositView : Form
     {
-        public deposit()
+        public DepositView()
         {
             InitializeComponent();
         }
@@ -24,7 +24,7 @@ namespace AtmProject
             string sqlQuery = "INSERT INTO Transactions (AccNum, Type, Amount, TDate) VALUES (@AccNum, @Type, @Amount, @TDate)";
             using (SqlCommand cmd = new SqlCommand(sqlQuery))
             {
-                cmd.Parameters.AddWithValue("@AccNum", login.numConta);
+                cmd.Parameters.AddWithValue("@AccNum", LoginView.numConta);
                 cmd.Parameters.AddWithValue("@Amount", tb_valor.Text);
                 cmd.Parameters.AddWithValue("@Type", type);
                 cmd.Parameters.AddWithValue("@TDate", DateTime.Now);
@@ -33,7 +33,7 @@ namespace AtmProject
         }
         private void lbl_log_out_Click(object sender, EventArgs e)
         {
-            home home = new home();
+            HomeView home = new HomeView();
             home.Show();
             this.Hide();
         }
@@ -60,17 +60,17 @@ namespace AtmProject
                 try
 
                 {
-                    balance balance = new balance();
+                    BalanceView balance = new BalanceView();
                     string query = "update Account set Balance = @Valor where Account.AccNum = @NumConta";
                     using (SqlCommand cmd = new SqlCommand(query))
                     {
-                        cmd.Parameters.AddWithValue("@Valor ", balance.GetSaldo(login.numConta) + Convert.ToDecimal(tb_valor.Text));
-                        cmd.Parameters.AddWithValue("@numConta", login.numConta);
+                        cmd.Parameters.AddWithValue("@Valor ", balance.GetSaldo(LoginView.numConta) + Convert.ToDecimal(tb_valor.Text));
+                        cmd.Parameters.AddWithValue("@numConta", LoginView.numConta);
 
                         ContextDatabase.Instance.ExecuteNonQuery(cmd);
                         this.AddTransacao("Depósito");
-                        MessageBox.Show($"O valor R${tb_valor.Text} foi depositado na conta {login.numConta}");
-                        home home = new home();
+                        MessageBox.Show($"O valor R${tb_valor.Text} foi depositado na conta {LoginView.numConta}");
+                        HomeView home = new HomeView();
                         home.Show();
                         this.Hide();
                     }
@@ -86,7 +86,7 @@ namespace AtmProject
 
         private void deposit_Load(object sender, EventArgs e)
         {
-            lb_numConta.Text = "Nº da conta:" + login.numConta;
+            lb_numConta.Text = "Nº da conta:" + LoginView.numConta;
         }
     }
 }

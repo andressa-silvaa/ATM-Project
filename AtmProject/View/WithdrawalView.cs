@@ -12,11 +12,11 @@ using System.Windows.Forms;
 
 namespace AtmProject
 {
-    public partial class withdrawal : Form
+    public partial class WithdrawalView : Form
     {
         private decimal _saldo;
 
-        public withdrawal()
+        public WithdrawalView()
         {
             InitializeComponent();
         }
@@ -26,7 +26,7 @@ namespace AtmProject
             string sqlQuery = "INSERT INTO Transactions (AccNum, Type, Amount, TDate) VALUES (@AccNum, @Type, @Amount, @TDate)";
             using (SqlCommand cmd = new SqlCommand(sqlQuery))
             {
-                cmd.Parameters.AddWithValue("@AccNum", login.numConta);
+                cmd.Parameters.AddWithValue("@AccNum", LoginView.numConta);
                 cmd.Parameters.AddWithValue("@Amount", amount);
                 cmd.Parameters.AddWithValue("@Type", type);
                 cmd.Parameters.AddWithValue("@TDate", DateTime.Now);
@@ -41,7 +41,7 @@ namespace AtmProject
 
         private void lbl_back_Click(object sender, EventArgs e)
         {
-            home home = new home();
+            HomeView home = new HomeView();
             home.Show();
             this.Hide();
         }
@@ -76,13 +76,13 @@ namespace AtmProject
                     using (SqlCommand cmd = new SqlCommand(query))
                     {
                         cmd.Parameters.AddWithValue("@Valor ", _saldo - amountWithdrawal);
-                        cmd.Parameters.AddWithValue("@numConta", login.numConta);
+                        cmd.Parameters.AddWithValue("@numConta", LoginView.numConta);
 
 
                         ContextDatabase.Instance.ExecuteNonQuery(cmd);
                         this.AddTransacao("Saque", amountWithdrawal);
-                        MessageBox.Show($"O valor {amountWithdrawal:C2} foi sacado da conta {login.numConta}");
-                        home home = new home();
+                        MessageBox.Show($"O valor {amountWithdrawal:C2} foi sacado da conta {LoginView.numConta}");
+                        HomeView home = new HomeView();
                         home.Show();
                         this.Hide();
                     }
@@ -95,9 +95,9 @@ namespace AtmProject
         }
         private void withdrawal_Load(object sender, EventArgs e)
         {
-            lb_numConta.Text = "Nº da conta:" + login.numConta;
-            balance balance = new balance();
-            _saldo = balance.GetSaldo(login.numConta);
+            lb_numConta.Text = "Nº da conta:" + LoginView.numConta;
+            BalanceView balance = new BalanceView();
+            _saldo = balance.GetSaldo(LoginView.numConta);
             lbl_valor_real.Text = _saldo.ToString("C2");
         }
     }

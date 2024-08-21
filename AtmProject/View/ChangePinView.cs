@@ -12,9 +12,9 @@ using System.Windows.Forms;
 
 namespace AtmProject
 {
-    public partial class changePin : Form
+    public partial class ChangePinView : Form
     {
-        public changePin()
+        public ChangePinView()
         {
             InitializeComponent();
         }
@@ -26,7 +26,7 @@ namespace AtmProject
 
         private void lbl_log_out_Click(object sender, EventArgs e)
         {
-            home home = new home();
+            HomeView home = new HomeView();
             home.Show();
             this.Hide();
         }
@@ -49,11 +49,11 @@ namespace AtmProject
                     using (SqlCommand cmd = new SqlCommand(query))
                     {
                         cmd.Parameters.AddWithValue("@Valor ", tb_pin.Text);
-                        cmd.Parameters.AddWithValue("@numConta", login.numConta);
+                        cmd.Parameters.AddWithValue("@numConta", LoginView.numConta);
 
                         ContextDatabase.Instance.ExecuteNonQuery(cmd);
                         MessageBox.Show("O pin foi atualizado com sucesso!");
-                        home home = new home();
+                        HomeView home = new HomeView();
                         home.Show();
                         this.Hide();
                     }
@@ -68,7 +68,7 @@ namespace AtmProject
 
         private void changePin_Load(object sender, EventArgs e)
         {
-            lbl_valor.Text = "Nº da conta:" + login.numConta;
+            lbl_valor.Text = "Nº da conta:" + LoginView.numConta;
         }
     }
 }

@@ -12,17 +12,17 @@ using System.Windows.Forms;
 
 namespace AtmProject
 {
-    public partial class login : Form
+    public partial class LoginView : Form
     {
         public static string numConta;
-        public login()
+        public LoginView()
         {
             InitializeComponent();
         }
 
         private void lbl_sign_up_Click(object sender, EventArgs e)
         {
-            account acc = new account();
+            AccountView acc = new AccountView();
             acc.Show();
             this.Hide();
         }
@@ -45,7 +45,7 @@ namespace AtmProject
                 if (dt.Rows[0][0].ToString() == "1")
                 {
                     numConta = tb_num_conta.Text;
-                    home home = new home();
+                    HomeView home = new HomeView();
                     home.Show();
                     this.Hide();
                 }

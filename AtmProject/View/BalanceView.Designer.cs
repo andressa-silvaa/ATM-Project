@@ -1,6 +1,6 @@
 ﻿namespace AtmProject
 {
-    partial class balance
+    partial class BalanceView
     {
         /// <summary>
         /// Required designer variable.

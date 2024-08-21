@@ -11,9 +11,9 @@ using System.Data.SqlClient;
 using AtmProject.Banco;
 namespace AtmProject
 {
-    public partial class account : Form
+    public partial class AccountView : Form
     {
-        public account()
+        public AccountView()
         {
             InitializeComponent();
 
@@ -102,7 +102,7 @@ namespace AtmProject
                     // Executa a consulta
                     ContextDatabase.Instance.ExecuteNonQuery(cmd);
                     MessageBox.Show("Sua conta foi criada com sucesso!");
-                    login log = new login();
+                    LoginView log = new LoginView();
                     log.Show();
                     this.Hide();
                 }
@@ -115,7 +115,7 @@ namespace AtmProject
 
         private void lbl_log_out_Click(object sender, EventArgs e)
         {
-            login log = new login();
+            LoginView log = new LoginView();
             log.Show();
             this.Hide();
         }

@@ -1,6 +1,6 @@
 ﻿namespace AtmProject
 {
-    partial class home
+    partial class HomeView
     {
         /// <summary>
         /// Required designer variable.

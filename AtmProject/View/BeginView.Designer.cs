@@ -1,6 +1,6 @@
 ﻿namespace AtmProject
 {
-    partial class begin
+    partial class BeginView
     {
         /// <summary>
         ///  Required designer variable.

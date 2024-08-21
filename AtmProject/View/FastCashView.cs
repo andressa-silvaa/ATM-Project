@@ -12,15 +12,15 @@ using System.Windows.Forms;
 
 namespace AtmProject
 {
-    public partial class fastCash : Form
+    public partial class FastCashView : Form
     {
         private decimal _saldo;
 
-        public fastCash()
+        public FastCashView()
         {
             InitializeComponent();
-            balance balance = new balance();
-            _saldo = balance.GetSaldo(login.numConta);
+            BalanceView balance = new BalanceView();
+            _saldo = balance.GetSaldo(LoginView.numConta);
         }
 
         public void AddTransacao(string type, decimal amount)
@@ -28,7 +28,7 @@ namespace AtmProject
             string sqlQuery = "INSERT INTO Transactions (AccNum, Type, Amount, TDate) VALUES (@AccNum, @Type, @Amount, @TDate)";
             using (SqlCommand cmd = new SqlCommand(sqlQuery))
             {
-                cmd.Parameters.AddWithValue("@AccNum", login.numConta);
+                cmd.Parameters.AddWithValue("@AccNum", LoginView.numConta);
                 cmd.Parameters.AddWithValue("@Amount", amount);
                 cmd.Parameters.AddWithValue("@Type", type);
                 cmd.Parameters.AddWithValue("@TDate", DateTime.Now);
@@ -44,12 +44,12 @@ namespace AtmProject
         private void fastCash_Load(object sender, EventArgs e)
         {
             lb_saldo.Text = this._saldo.ToString("C2");
-            lb_numConta.Text = "Nº da conta:" + login.numConta;
+            lb_numConta.Text = "Nº da conta:" + LoginView.numConta;
         }
 
         private void lbl_back_Click(object sender, EventArgs e)
         {
-            home home = new home();
+            HomeView home = new HomeView();
             home.Show();
             this.Hide();
         }
@@ -66,10 +66,10 @@ namespace AtmProject
                 using (SqlCommand cmd = new SqlCommand(query))
                 {
                     cmd.Parameters.AddWithValue("@Valor ", _saldo - Convert.ToDecimal(valor));
-                    cmd.Parameters.AddWithValue("@numConta", login.numConta);
+                    cmd.Parameters.AddWithValue("@numConta", LoginView.numConta);
                     ContextDatabase.Instance.ExecuteNonQuery(cmd);
                     this.AddTransacao("Caixa Rápido", valor);
-                    return $"O valor R${valor} foi sacado da conta {login.numConta}";
+                    return $"O valor R${valor} foi sacado da conta {LoginView.numConta}";
                 }
 
             }
@@ -84,7 +84,7 @@ namespace AtmProject
         {
             string resposta = this.Sacar(100m);
             MessageBox.Show(resposta);
-            home home = new home();
+            HomeView home = new HomeView();
             home.Show();
             this.Hide();
         }
@@ -93,7 +93,7 @@ namespace AtmProject
         {
             string resposta = this.Sacar(200m);
             MessageBox.Show(resposta);
-            home home = new home();
+            HomeView home = new HomeView();
             home.Show();
             this.Hide();
         }
@@ -102,7 +102,7 @@ namespace AtmProject
         {
             string resposta = this.Sacar(400m);
             MessageBox.Show(resposta);
-            home home = new home();
+            HomeView home = new HomeView();
             home.Show();
             this.Hide();
         }
@@ -111,7 +111,7 @@ namespace AtmProject
         {
             string resposta = this.Sacar(500m);
             MessageBox.Show(resposta);
-            home home = new home();
+            HomeView home = new HomeView();
             home.Show();
             this.Hide();
         }
@@ -120,7 +120,7 @@ namespace AtmProject
         {
             string resposta = this.Sacar(1000m);
             MessageBox.Show(resposta);
-            home home = new home();
+            HomeView home = new HomeView();
             home.Show();
             this.Hide();
         }
@@ -129,7 +129,7 @@ namespace AtmProject
         {
             string resposta = this.Sacar(800m);
             MessageBox.Show(resposta);
-            home home = new home();
+            HomeView home = new HomeView();
             home.Show();
             this.Hide();
         }
