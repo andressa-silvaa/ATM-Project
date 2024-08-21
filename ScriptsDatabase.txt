@@ -1,0 +1,38 @@
+
+
+USE MASTER;
+GO
+CREATE DATABASE ATM;
+GO
+USE ATM;
+GO
+CREATE TABLE Account (
+    AccNum INT PRIMARY KEY,          -- Número da conta, como chave primária
+    Name NVARCHAR(100) NOT NULL,     -- Nome do titular da conta
+    Phone NVARCHAR(20),              -- Telefone
+    Address NVARCHAR(255),           -- Endereço
+    Education NVARCHAR(100),         -- Nível de educação
+    Dob DATE,                        -- Data de nascimento
+    Pin INT NOT NULL,                -- PIN de segurança
+    Balance DECIMAL(18, 2) NOT NULL  -- Saldo da conta
+);
+
+GO
+CREATE TABLE Transactions (
+    TransactionID INT IDENTITY(1,1) PRIMARY KEY,  -- Identificador único para cada transação
+    AccNum INT NOT NULL,                          -- Número da conta associada à transação
+    Type NVARCHAR(50) NOT NULL,                   -- Tipo de transação (ex: depósito, retirada)
+    Amount DECIMAL(18, 2) NOT NULL,               -- Valor da transação
+    TDate DATETIME NOT NULL,                      -- Data e hora da transação
+    CONSTRAINT FK_Transactions_Account FOREIGN KEY (AccNum) 
+        REFERENCES Account(AccNum)                -- Chave estrangeira referenciando a tabela Account
+);
+
+
+
+
+-- Inicialização de dados
+
+INSERT INTO Account (AccNum, Name, Phone, Address, Education, Dob, Pin, Balance) 
+VALUES (1, 'João Silva', '123456789', 'Rua A, 123', 'Ensino Superior - Completo', '1985-06-15', 1234, 1000.00),
+(2, 'Maria Oliveira', '987654321', 'Rua B, 456', 'Ensino Superior - Completo', '1990-12-22', 5678, 2500.00);
