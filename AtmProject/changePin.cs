@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AtmProject.Banco;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,9 +14,6 @@ namespace AtmProject
 {
     public partial class changePin : Form
     {
-        SqlConnection conn;
-        string connectionString = "Data Source=DESKTOP-DHI9FTI\\SQLEXPRESS;Initial Catalog=ATM;Integrated Security=True;Encrypt=True;TrustServerCertificate=True;";
-
         public changePin()
         {
             InitializeComponent();
@@ -48,18 +46,16 @@ namespace AtmProject
                 try
                 {
                     string query = "update Account set Pin = @Valor where Account.AccNum = @NumConta";
-                    using (conn = new SqlConnection(connectionString))
+                    using (SqlCommand cmd = new SqlCommand(query))
                     {
-                        SqlCommand cmd = new SqlCommand(query, conn);
                         cmd.Parameters.AddWithValue("@Valor ", tb_pin.Text);
                         cmd.Parameters.AddWithValue("@numConta", login.numConta);
-                        conn.Open();
-                        cmd.ExecuteNonQuery();
+
+                        ContextDatabase.Instance.ExecuteNonQuery(cmd);
                         MessageBox.Show("O pin foi atualizado com sucesso!");
                         home home = new home();
                         home.Show();
                         this.Hide();
-
                     }
                 }
                 catch (Exception ex)

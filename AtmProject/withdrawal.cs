@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AtmProject.Banco;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,37 +14,25 @@ namespace AtmProject
 {
     public partial class withdrawal : Form
     {
-        private string _saldo;
-        SqlConnection conn;
-        string connectionString = "Data Source=DESKTOP-DHI9FTI\\SQLEXPRESS;Initial Catalog=ATM;Integrated Security=True;Encrypt=True;TrustServerCertificate=True;";
+        private decimal _saldo;
 
         public withdrawal()
         {
             InitializeComponent();
         }
 
-        public void addTransacao(string type)
+        public void AddTransacao(string type, decimal amount)
         {
-            using (conn = new SqlConnection(connectionString))
+            string sqlQuery = "INSERT INTO Transactions (AccNum, Type, Amount, TDate) VALUES (@AccNum, @Type, @Amount, @TDate)";
+            using (SqlCommand cmd = new SqlCommand(sqlQuery))
             {
-                try
-                {
-                    conn.Open();
-                    string sqlQuery = "INSERT INTO Transactions (AccNum, Type, Amount, TDate) VALUES (@AccNum, @Type, @Amount, @TDate)";
-                    using (SqlCommand cmd = new SqlCommand(sqlQuery, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@AccNum", login.numConta);
-                        cmd.Parameters.AddWithValue("@Amount", tb_valor.Text);
-                        cmd.Parameters.AddWithValue("@Type", type);
-                        cmd.Parameters.AddWithValue("@TDate", DateTime.Now);
-                        cmd.ExecuteNonQuery();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
+                cmd.Parameters.AddWithValue("@AccNum", login.numConta);
+                cmd.Parameters.AddWithValue("@Amount", amount);
+                cmd.Parameters.AddWithValue("@Type", type);
+                cmd.Parameters.AddWithValue("@TDate", DateTime.Now);
+                ContextDatabase.Instance.ExecuteNonQuery(cmd);
             }
+
         }
         private void lbl_sair_Click(object sender, EventArgs e)
         {
@@ -65,7 +54,7 @@ namespace AtmProject
             }
             else if (!Util.ValidateInteger(tb_valor.Text))
             {
-                 MessageBox.Show("Necessário informar um valor válido!");
+                MessageBox.Show("Necessário informar um valor válido!");
                 return;
             }
             else if (Convert.ToInt32(tb_valor.Text) <= 0)
@@ -83,20 +72,19 @@ namespace AtmProject
                 try
                 {
                     string query = "update Account set Balance = @Valor where Account.AccNum = @NumConta";
-                    using (conn = new SqlConnection(connectionString))
+                    var amountWithdrawal = Convert.ToDecimal(tb_valor.Text);
+                    using (SqlCommand cmd = new SqlCommand(query))
                     {
-                        SqlCommand cmd = new SqlCommand(query, conn);
-                        cmd.Parameters.AddWithValue("@Valor ", Convert.ToInt32(_saldo) - Convert.ToInt32(tb_valor.Text));
+                        cmd.Parameters.AddWithValue("@Valor ", _saldo - amountWithdrawal);
                         cmd.Parameters.AddWithValue("@numConta", login.numConta);
 
-                        conn.Open();
-                        cmd.ExecuteNonQuery();
-                        addTransacao("Saque");
-                        MessageBox.Show($"O valor R${tb_valor.Text} foi sacado da conta {login.numConta}");
+
+                        ContextDatabase.Instance.ExecuteNonQuery(cmd);
+                        this.AddTransacao("Saque", amountWithdrawal);
+                        MessageBox.Show($"O valor {amountWithdrawal:C2} foi sacado da conta {login.numConta}");
                         home home = new home();
                         home.Show();
                         this.Hide();
-
                     }
                 }
                 catch (Exception ex)
@@ -109,8 +97,8 @@ namespace AtmProject
         {
             lb_numConta.Text = "Nº da conta:" + login.numConta;
             balance balance = new balance();
-            _saldo = balance.getSaldo(login.numConta);
-            lbl_valor_real.Text = "R$ " + balance.getSaldo(login.numConta);
+            _saldo = balance.GetSaldo(login.numConta);
+            lbl_valor_real.Text = _saldo.ToString("C2");
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AtmProject.Banco;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,34 +15,20 @@ namespace AtmProject
 
     public partial class deposit : Form
     {
-        SqlConnection conn;
-        string connectionString = "Data Source=DESKTOP-DHI9FTI\\SQLEXPRESS;Initial Catalog=ATM;Integrated Security=True;Encrypt=True;TrustServerCertificate=True;";
-
         public deposit()
         {
             InitializeComponent();
         }
-        public void addTransacao(string type)
+        public void AddTransacao(string type)
         {
-            using (conn = new SqlConnection(connectionString))
+            string sqlQuery = "INSERT INTO Transactions (AccNum, Type, Amount, TDate) VALUES (@AccNum, @Type, @Amount, @TDate)";
+            using (SqlCommand cmd = new SqlCommand(sqlQuery))
             {
-                try
-                {
-                    conn.Open();
-                    string sqlQuery = "INSERT INTO Transactions (AccNum, Type, Amount, TDate) VALUES (@AccNum, @Type, @Amount, @TDate)";
-                    using (SqlCommand cmd = new SqlCommand(sqlQuery, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@AccNum", login.numConta);
-                        cmd.Parameters.AddWithValue("@Amount", tb_valor.Text);
-                        cmd.Parameters.AddWithValue("@Type", type);
-                        cmd.Parameters.AddWithValue("@TDate", DateTime.Now); 
-                        cmd.ExecuteNonQuery();
-                    }
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
+                cmd.Parameters.AddWithValue("@AccNum", login.numConta);
+                cmd.Parameters.AddWithValue("@Amount", tb_valor.Text);
+                cmd.Parameters.AddWithValue("@Type", type);
+                cmd.Parameters.AddWithValue("@TDate", DateTime.Now);
+                ContextDatabase.Instance.ExecuteNonQuery(cmd);
             }
         }
         private void lbl_log_out_Click(object sender, EventArgs e)
@@ -75,20 +62,17 @@ namespace AtmProject
                 {
                     balance balance = new balance();
                     string query = "update Account set Balance = @Valor where Account.AccNum = @NumConta";
-                    using (conn = new SqlConnection(connectionString))
+                    using (SqlCommand cmd = new SqlCommand(query))
                     {
-                        SqlCommand cmd = new SqlCommand(query, conn);
-                        cmd.Parameters.AddWithValue("@Valor ", Convert.ToInt32(balance.getSaldo(login.numConta)) + Convert.ToInt32(tb_valor.Text));
+                        cmd.Parameters.AddWithValue("@Valor ", balance.GetSaldo(login.numConta) + Convert.ToDecimal(tb_valor.Text));
                         cmd.Parameters.AddWithValue("@numConta", login.numConta);
 
-                        conn.Open();
-                        cmd.ExecuteNonQuery();
-                        addTransacao("Depósito");
+                        ContextDatabase.Instance.ExecuteNonQuery(cmd);
+                        this.AddTransacao("Depósito");
                         MessageBox.Show($"O valor R${tb_valor.Text} foi depositado na conta {login.numConta}");
                         home home = new home();
                         home.Show();
                         this.Hide();
-
                     }
                 }
                 catch (Exception ex)

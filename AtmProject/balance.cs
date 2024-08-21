@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AtmProject.Banco;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,46 +14,25 @@ namespace AtmProject
 {
     public partial class balance : Form
     {
-        private string _saldo;
-        SqlConnection conn;
-        string connectionString = "Data Source=DESKTOP-DHI9FTI\\SQLEXPRESS;Initial Catalog=ATM;Integrated Security=True;Encrypt=True;TrustServerCertificate=True;";
+        private decimal _saldo;
 
         public balance()
         {
             InitializeComponent();
-            this._saldo = getSaldo(login.numConta);
+            this._saldo = this.GetSaldo(login.numConta);
         }
 
-        public string getSaldo(string numConta)
+        public decimal GetSaldo(string numConta)
         {
-            try
+            string query = "select balance from Account where AccNum = @numConta";
+            using (SqlCommand cmd = new SqlCommand(query))
             {
+                cmd.Parameters.AddWithValue("@numConta", login.numConta);
 
-                string query = "select balance from Account where AccNum = @numConta";
-                using (conn = new SqlConnection(connectionString))
-                {
-                    SqlCommand cmd = new SqlCommand(query, conn);
-                    cmd.Parameters.AddWithValue("@numConta", login.numConta);
+                decimal result = ContextDatabase.Instance.ExecuteScalar<decimal?>(cmd).GetValueOrDefault();
 
-                    conn.Open();
-                    object result = cmd.ExecuteScalar();
-
-                    if (result != null && result != DBNull.Value)
-                    {
-                        return result.ToString();
-                    }
-                    else
-                    {
-                        return "R$ 0";
-                    }
-                }
-
+                return result;
             }
-            catch (Exception ex)
-            {
-                return ex.Message;
-            }
-
         }
 
 
@@ -71,7 +51,7 @@ namespace AtmProject
         private void balance_Load(object sender, EventArgs e)
         {
             lbl_num_conta_real.Text = login.numConta;
-            lbl_saldo_real.Text = "R$ " + (!string.IsNullOrEmpty(_saldo) ? _saldo : "0");
+            lbl_saldo_real.Text = this._saldo.ToString("C2");
 
         }
     }

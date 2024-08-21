@@ -8,13 +8,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+using AtmProject.Banco;
 namespace AtmProject
 {
     public partial class account : Form
     {
-        SqlConnection conn;
-        string connectionString = "Data Source=DESKTOP-DHI9FTI\\SQLEXPRESS;Initial Catalog=ATM;Integrated Security=True;Encrypt=True;TrustServerCertificate=True;";
-
         public account()
         {
             InitializeComponent();
@@ -86,36 +84,32 @@ namespace AtmProject
                 return;
             }
 
-            using (conn = new SqlConnection(connectionString))
+            try
             {
-                try
+                string sqlQuery = "INSERT INTO Account (AccNum, Name, Phone, Address, Education, Dob, Pin, Balance) VALUES (@AccNum, @Name, @Phone, @Address, @Education, @Dob, @Pin, @Balance)";
+                using (SqlCommand cmd = new SqlCommand(sqlQuery))
                 {
-                    conn.Open();
-                    string sqlQuery = "INSERT INTO Account (AccNum, Name, Phone, Address, Education, Dob, Pin, Balance) VALUES (@AccNum, @Name, @Phone, @Address, @Education, @Dob, @Pin, @Balance)";
-                    using (SqlCommand cmd = new SqlCommand(sqlQuery, conn))
-                    {
-                        // Adiciona os parâmetros ao comando
-                        cmd.Parameters.AddWithValue("@AccNum", tb_num_conta.Text);
-                        cmd.Parameters.AddWithValue("@Name", tb_nome.Text);
-                        cmd.Parameters.AddWithValue("@Phone", tb_telefone.Text);
-                        cmd.Parameters.AddWithValue("@Address", tb_endereco.Text);
-                        cmd.Parameters.AddWithValue("@Education", cb_educacao.SelectedItem.ToString()); // Aqui, SelectedItem já é garantido que não é null
-                        cmd.Parameters.AddWithValue("@Dob", dt_nascimento.Value.ToString("yyyy-MM-dd")); // Formata a data corretamente
-                        cmd.Parameters.AddWithValue("@Pin", tb_pin.Text);
-                        cmd.Parameters.AddWithValue("@Balance", bal);
+                    // Adiciona os parâmetros ao comando
+                    cmd.Parameters.AddWithValue("@AccNum", tb_num_conta.Text);
+                    cmd.Parameters.AddWithValue("@Name", tb_nome.Text);
+                    cmd.Parameters.AddWithValue("@Phone", tb_telefone.Text);
+                    cmd.Parameters.AddWithValue("@Address", tb_endereco.Text);
+                    cmd.Parameters.AddWithValue("@Education", cb_educacao.SelectedItem.ToString()); // Aqui, SelectedItem já é garantido que não é null
+                    cmd.Parameters.AddWithValue("@Dob", dt_nascimento.Value.ToString("yyyy-MM-dd")); // Formata a data corretamente
+                    cmd.Parameters.AddWithValue("@Pin", tb_pin.Text);
+                    cmd.Parameters.AddWithValue("@Balance", bal);
 
-                        // Executa a consulta
-                        cmd.ExecuteNonQuery();
-                        MessageBox.Show("Sua conta foi criada com sucesso!");
-                        login log = new login();
-                        log.Show();
-                        this.Hide();
-                    }
+                    // Executa a consulta
+                    ContextDatabase.Instance.ExecuteNonQuery(cmd);
+                    MessageBox.Show("Sua conta foi criada com sucesso!");
+                    login log = new login();
+                    log.Show();
+                    this.Hide();
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
         }
 

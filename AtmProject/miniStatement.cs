@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AtmProject.Banco;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,35 +15,18 @@ namespace AtmProject
     public partial class miniStatement : Form
     {
         private string _saldo;
-        SqlConnection conn;
-        string connectionString = "Data Source=DESKTOP-DHI9FTI\\SQLEXPRESS;Initial Catalog=ATM;Integrated Security=True;Encrypt=True;TrustServerCertificate=True;";
 
         public miniStatement()
         {
             InitializeComponent();
         }
-        private void populate()
+        private void Populate()
         {
-            using (conn = new SqlConnection(connectionString))
+            string sqlQuery = "Select * from Transactions t where t.AccNum = @NumConta";
+            using (SqlCommand cmd = new SqlCommand(sqlQuery))
             {
-                try
-                {
-                    conn.Open();
-                    string sqlQuery = "Select * from Transactions t where t.AccNum = @NumConta";
-                    using (SqlCommand cmd = new SqlCommand(sqlQuery, conn))
-                    {
-                        cmd.Parameters.AddWithValue("@NumConta", login.numConta);
-                        SqlDataAdapter adapter = new SqlDataAdapter(cmd);
-                        SqlCommandBuilder Builder = new SqlCommandBuilder(adapter);
-                        var ds = new DataSet();
-                        adapter.Fill(ds);
-                        dt_extrato.DataSource = ds.Tables[0];
-                    }
-                }
-                catch (Exception ex)
-                {
-                    throw;
-                }
+                cmd.Parameters.AddWithValue("@NumConta", login.numConta);
+                dt_extrato.DataSource = ContextDatabase.Instance.ReaderDataTable(cmd);
             }
 
         }
@@ -51,13 +35,13 @@ namespace AtmProject
             lb_numConta.Text = "Nº da conta:" + login.numConta;
             try
             {
-                populate();
+                Populate();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
-            
+
 
 
         }
@@ -72,7 +56,7 @@ namespace AtmProject
             home home = new home();
             home.Show();
             this.Hide();
-           
+
         }
     }
 }
