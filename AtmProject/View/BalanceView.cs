@@ -1,4 +1,5 @@
 ﻿using AtmProject.Banco;
+using AtmProject.Repositorio;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,21 +20,12 @@ namespace AtmProject
         public BalanceView()
         {
             InitializeComponent();
-            this._saldo = this.GetSaldo(LoginView.numConta);
+            AccountRepository accountRepository = new AccountRepository();
+
+            this._saldo = accountRepository.GetBalance(LoginView.numConta);
         }
 
-        public decimal GetSaldo(string numConta)
-        {
-            string query = "select balance from Account where AccNum = @numConta";
-            using (SqlCommand cmd = new SqlCommand(query))
-            {
-                cmd.Parameters.AddWithValue("@numConta", LoginView.numConta);
 
-                decimal result = ContextDatabase.Instance.ExecuteScalar<decimal?>(cmd).GetValueOrDefault();
-
-                return result;
-            }
-        }
 
 
         private void label7_Click(object sender, EventArgs e)
@@ -50,7 +42,7 @@ namespace AtmProject
 
         private void balance_Load(object sender, EventArgs e)
         {
-            lbl_num_conta_real.Text = LoginView.numConta;
+            lbl_num_conta_real.Text = LoginView.numConta.ToString();
             lbl_saldo_real.Text = this._saldo.ToString("C2");
 
         }

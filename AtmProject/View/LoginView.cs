@@ -1,4 +1,6 @@
 ﻿using AtmProject.Banco;
+using AtmProject.Repositorio;
+using Microsoft.VisualBasic.Logging;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,7 +16,7 @@ namespace AtmProject
 {
     public partial class LoginView : Form
     {
-        public static string numConta;
+        public static int numConta;
         public LoginView()
         {
             InitializeComponent();
@@ -34,26 +36,24 @@ namespace AtmProject
 
         private void btn_login_Click(object sender, EventArgs e)
         {
-            string query = "select count(*) from Account where AccNum = @numConta and Pin = @Pin";
-            using (SqlCommand cmd = new SqlCommand(query))
+            var accNum = Convert.ToInt32("0" + tb_num_conta.Text);
+            var pin = Convert.ToInt32("0" + tb_senha.Text);
+            AccountRepository accountRepository = new AccountRepository();
+            var isValid = accountRepository.Login(accNum, pin);
+
+
+            if (isValid)
             {
-                cmd.Parameters.AddWithValue("@numConta", tb_num_conta.Text);
-                cmd.Parameters.AddWithValue("@Pin", tb_senha.Text);
-                DataTable dt = ContextDatabase.Instance.ReaderDataTable(cmd);
-
-
-                if (dt.Rows[0][0].ToString() == "1")
-                {
-                    numConta = tb_num_conta.Text;
-                    HomeView home = new HomeView();
-                    home.Show();
-                    this.Hide();
-                }
-                else
-                {
-                    MessageBox.Show("Dados incorretos.\nTente novamente!");
-                }
+                numConta = Convert.ToInt32(tb_num_conta.Text);
+                HomeView home = new HomeView();
+                home.Show();
+                this.Hide();
+            }
+            else
+            {
+                MessageBox.Show("Dados incorretos.\nTente novamente!");
             }
         }
     }
 }
+

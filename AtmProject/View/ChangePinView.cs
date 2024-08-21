@@ -1,4 +1,5 @@
 ﻿using AtmProject.Banco;
+using AtmProject.Repositorio;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -45,18 +46,14 @@ namespace AtmProject
             {
                 try
                 {
-                    string query = "update Account set Pin = @Valor where Account.AccNum = @NumConta";
-                    using (SqlCommand cmd = new SqlCommand(query))
-                    {
-                        cmd.Parameters.AddWithValue("@Valor ", tb_pin.Text);
-                        cmd.Parameters.AddWithValue("@numConta", LoginView.numConta);
+                    var newPin = Convert.ToInt32(tb_pin.Text);
+                    AccountRepository accountRepository = new AccountRepository();
+                    accountRepository.UpdatePin(LoginView.numConta, newPin);
+                    MessageBox.Show("O pin foi atualizado com sucesso!");
+                    HomeView home = new HomeView();
+                    home.Show();
+                    this.Hide();
 
-                        ContextDatabase.Instance.ExecuteNonQuery(cmd);
-                        MessageBox.Show("O pin foi atualizado com sucesso!");
-                        HomeView home = new HomeView();
-                        home.Show();
-                        this.Hide();
-                    }
                 }
                 catch (Exception ex)
                 {

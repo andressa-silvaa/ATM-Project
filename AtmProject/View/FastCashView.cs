@@ -1,4 +1,5 @@
 ﻿using AtmProject.Banco;
+using AtmProject.Repositorio;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,22 +20,11 @@ namespace AtmProject
         public FastCashView()
         {
             InitializeComponent();
-            BalanceView balance = new BalanceView();
-            _saldo = balance.GetSaldo(LoginView.numConta);
+            AccountRepository accountRepository = new AccountRepository();
+            _saldo = accountRepository.GetBalance(LoginView.numConta);
         }
 
-        public void AddTransacao(string type, decimal amount)
-        {
-            string sqlQuery = "INSERT INTO Transactions (AccNum, Type, Amount, TDate) VALUES (@AccNum, @Type, @Amount, @TDate)";
-            using (SqlCommand cmd = new SqlCommand(sqlQuery))
-            {
-                cmd.Parameters.AddWithValue("@AccNum", LoginView.numConta);
-                cmd.Parameters.AddWithValue("@Amount", amount);
-                cmd.Parameters.AddWithValue("@Type", type);
-                cmd.Parameters.AddWithValue("@TDate", DateTime.Now);
-                ContextDatabase.Instance.ExecuteNonQuery(cmd);
-            }
-        }
+
 
         private void lbl_sair_Click(object sender, EventArgs e)
         {
@@ -54,23 +44,18 @@ namespace AtmProject
             this.Hide();
         }
 
-        public string Sacar(decimal valor)
+        public string Sacar(decimal value)
         {
             try
             {
-                if (Convert.ToDecimal(valor) > _saldo)
+                AccountRepository accountRepository = new AccountRepository();
+                if (value > accountRepository.GetBalance(LoginView.numConta))
                 {
                     return "Saldo insuficiente.";
                 }
-                string query = "update Account set Balance = @Valor where Account.AccNum = @NumConta";
-                using (SqlCommand cmd = new SqlCommand(query))
-                {
-                    cmd.Parameters.AddWithValue("@Valor ", _saldo - Convert.ToDecimal(valor));
-                    cmd.Parameters.AddWithValue("@numConta", LoginView.numConta);
-                    ContextDatabase.Instance.ExecuteNonQuery(cmd);
-                    this.AddTransacao("Caixa Rápido", valor);
-                    return $"O valor R${valor} foi sacado da conta {LoginView.numConta}";
-                }
+
+                accountRepository.Withdrawal(LoginView.numConta, value, "Caixa Rápido");
+                return $"O valor R${value} foi sacado da conta {LoginView.numConta}";
 
             }
             catch (Exception ex)

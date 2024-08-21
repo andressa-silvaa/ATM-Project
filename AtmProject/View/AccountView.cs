@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
 using AtmProject.Banco;
+using AtmProject.Entidades;
 namespace AtmProject
 {
     public partial class AccountView : Form
@@ -21,10 +22,6 @@ namespace AtmProject
 
         private void btn_sign_in_Click(object sender, EventArgs e)
         {
-            int bal = 0; // Inicialize a variável bal conforme necessário
-                         // Verificações individuais de cada campo
-
-
             if (string.IsNullOrWhiteSpace(tb_num_conta.Text) ||
                 string.IsNullOrWhiteSpace(tb_pin.Text) ||
                 string.IsNullOrWhiteSpace(tb_endereco.Text) ||
@@ -86,26 +83,25 @@ namespace AtmProject
 
             try
             {
-                string sqlQuery = "INSERT INTO Account (AccNum, Name, Phone, Address, Education, Dob, Pin, Balance) VALUES (@AccNum, @Name, @Phone, @Address, @Education, @Dob, @Pin, @Balance)";
-                using (SqlCommand cmd = new SqlCommand(sqlQuery))
-                {
-                    // Adiciona os parâmetros ao comando
-                    cmd.Parameters.AddWithValue("@AccNum", tb_num_conta.Text);
-                    cmd.Parameters.AddWithValue("@Name", tb_nome.Text);
-                    cmd.Parameters.AddWithValue("@Phone", tb_telefone.Text);
-                    cmd.Parameters.AddWithValue("@Address", tb_endereco.Text);
-                    cmd.Parameters.AddWithValue("@Education", cb_educacao.SelectedItem.ToString()); // Aqui, SelectedItem já é garantido que não é null
-                    cmd.Parameters.AddWithValue("@Dob", dt_nascimento.Value.ToString("yyyy-MM-dd")); // Formata a data corretamente
-                    cmd.Parameters.AddWithValue("@Pin", tb_pin.Text);
-                    cmd.Parameters.AddWithValue("@Balance", bal);
+                Account account = new Account();
 
-                    // Executa a consulta
-                    ContextDatabase.Instance.ExecuteNonQuery(cmd);
-                    MessageBox.Show("Sua conta foi criada com sucesso!");
-                    LoginView log = new LoginView();
-                    log.Show();
-                    this.Hide();
-                }
+                // Adiciona os parâmetros ao comando
+                account.AccNum = Convert.ToInt32(tb_num_conta.Text);
+                account.Name = tb_nome.Text;
+                account.Phone = tb_telefone.Text;
+                account.Address = tb_endereco.Text;
+                account.Education = cb_educacao.SelectedItem.ToString();
+                account.Dob = dt_nascimento.Value;
+                account.Pin = Convert.ToInt32(tb_pin.Text);
+
+
+                Repositorio.AccountRepository accountRepository = new Repositorio.AccountRepository();
+                accountRepository.Create(account);
+
+                MessageBox.Show("Sua conta foi criada com sucesso!");
+                LoginView log = new LoginView();
+                log.Show();
+                this.Hide();
             }
             catch (Exception ex)
             {

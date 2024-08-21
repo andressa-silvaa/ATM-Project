@@ -1,4 +1,5 @@
 ﻿using AtmProject.Banco;
+using AtmProject.Repositorio;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,21 +15,13 @@ namespace AtmProject
 {
     public partial class MiniStatementView : Form
     {
-        private string _saldo;
-
         public MiniStatementView()
         {
             InitializeComponent();
         }
         private void Populate()
         {
-            string sqlQuery = "Select * from Transactions t where t.AccNum = @NumConta";
-            using (SqlCommand cmd = new SqlCommand(sqlQuery))
-            {
-                cmd.Parameters.AddWithValue("@NumConta", LoginView.numConta);
-                dt_extrato.DataSource = ContextDatabase.Instance.ReaderDataTable(cmd);
-            }
-
+            dt_extrato.DataSource = new TransactionsRepository().GetAllTransactions(LoginView.numConta);
         }
         private void miniStatement_Load(object sender, EventArgs e)
         {
@@ -41,9 +34,6 @@ namespace AtmProject
             {
                 MessageBox.Show(ex.Message);
             }
-
-
-
         }
 
         private void lbl_sair_Click(object sender, EventArgs e)

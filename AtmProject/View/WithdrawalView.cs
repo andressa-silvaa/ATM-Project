@@ -1,4 +1,5 @@
 ﻿using AtmProject.Banco;
+using AtmProject.Repositorio;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -21,19 +22,6 @@ namespace AtmProject
             InitializeComponent();
         }
 
-        public void AddTransacao(string type, decimal amount)
-        {
-            string sqlQuery = "INSERT INTO Transactions (AccNum, Type, Amount, TDate) VALUES (@AccNum, @Type, @Amount, @TDate)";
-            using (SqlCommand cmd = new SqlCommand(sqlQuery))
-            {
-                cmd.Parameters.AddWithValue("@AccNum", LoginView.numConta);
-                cmd.Parameters.AddWithValue("@Amount", amount);
-                cmd.Parameters.AddWithValue("@Type", type);
-                cmd.Parameters.AddWithValue("@TDate", DateTime.Now);
-                ContextDatabase.Instance.ExecuteNonQuery(cmd);
-            }
-
-        }
         private void lbl_sair_Click(object sender, EventArgs e)
         {
             Application.Exit();
@@ -62,7 +50,7 @@ namespace AtmProject
                 MessageBox.Show("Entre com um valor válido!");
                 return;
             }
-            else if (Convert.ToInt32(tb_valor.Text) > Convert.ToInt32(_saldo))
+            else if (Convert.ToDecimal(tb_valor.Text) > Convert.ToDecimal(_saldo))
             {
                 MessageBox.Show("Insira um valor menor ou igual ao seu saldo.");
                 return;
@@ -71,21 +59,14 @@ namespace AtmProject
             {
                 try
                 {
-                    string query = "update Account set Balance = @Valor where Account.AccNum = @NumConta";
-                    var amountWithdrawal = Convert.ToDecimal(tb_valor.Text);
-                    using (SqlCommand cmd = new SqlCommand(query))
-                    {
-                        cmd.Parameters.AddWithValue("@Valor ", _saldo - amountWithdrawal);
-                        cmd.Parameters.AddWithValue("@numConta", LoginView.numConta);
+                    var value = Convert.ToDecimal(tb_valor.Text);
 
+                    AccountRepository accountRepository = new AccountRepository();
+                    accountRepository.Withdrawal(LoginView.numConta, value, "Saque");
 
-                        ContextDatabase.Instance.ExecuteNonQuery(cmd);
-                        this.AddTransacao("Saque", amountWithdrawal);
-                        MessageBox.Show($"O valor {amountWithdrawal:C2} foi sacado da conta {LoginView.numConta}");
-                        HomeView home = new HomeView();
-                        home.Show();
-                        this.Hide();
-                    }
+                    HomeView home = new HomeView();
+                    home.Show();
+                    this.Hide();
                 }
                 catch (Exception ex)
                 {
@@ -96,8 +77,8 @@ namespace AtmProject
         private void withdrawal_Load(object sender, EventArgs e)
         {
             lb_numConta.Text = "Nº da conta:" + LoginView.numConta;
-            BalanceView balance = new BalanceView();
-            _saldo = balance.GetSaldo(LoginView.numConta);
+            AccountRepository accountRepository = new AccountRepository();
+            _saldo = accountRepository.GetBalance(LoginView.numConta);
             lbl_valor_real.Text = _saldo.ToString("C2");
         }
     }
