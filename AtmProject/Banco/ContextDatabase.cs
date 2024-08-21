@@ -29,7 +29,7 @@ namespace AtmProject.Banco
         {
             get
             {
-                return instance ?? (instance = new ContextDatabase("Data Source=DESKTOP-NBJ41R8;Initial Catalog=ATM;Integrated Security=True;Encrypt=True;TrustServerCertificate=True;"));
+                return instance ?? (instance = new ContextDatabase("Data Source=DESKTOP-DHI9FTI\\SQLEXPRESS;Initial Catalog=ATM;Integrated Security=True;Encrypt=True;TrustServerCertificate=True;"));
             }
         }
         #endregion
